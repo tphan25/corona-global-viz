@@ -1,0 +1,2 @@
+export const TOGGLE_PANEL_OPEN = "TOGGLE_PANEL_OPEN";
+export const SET_CAMERA_FLY_TO = "CAMERA_FLY_TO";
