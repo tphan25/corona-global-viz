@@ -5,8 +5,7 @@ import '../../App.css';
 
 import {STYLES} from '../../utils/constants';
 import {makeClassNames, buildListFromArgs, getValuesOnObject} from '../../utils/utils';
-import { NavigationForm } from '../NavigationForm/NavigationForm';
-
+import NavigationForm from '../NavigationForm/NavigationForm';
 
 export const SideMenu = () => {
     return (
@@ -17,7 +16,6 @@ export const SideMenu = () => {
                     getValuesOnObject(STYLES),
                 )
             )}>
-            <div>Hello, side menu!</div>
             <NavigationForm />
         </Container>
     );

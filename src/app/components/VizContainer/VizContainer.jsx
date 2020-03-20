@@ -30,7 +30,7 @@ const VizContainer = ({cameraState}) => {
         </ Viewer>
     )
 }
-//props.cameraState.cameraFlyToProps
+
 function mapStateToProps(state) {
     return {
         cameraState: state.cameraState,

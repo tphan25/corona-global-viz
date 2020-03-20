@@ -2,10 +2,7 @@ import {SET_CAMERA_FLY_TO} from '../actionTypes';
 import {Cartesian3} from 'cesium';
 
 const initialState = {
-    cameraFlyToProps: {
-        duration: 5,
-        destination: Cartesian3.fromDegrees(139.767052, 35.681167, 100),
-    },
+    cameraFlyToProps: null,
 }
 
 export const cameraState = (state = initialState, action) => {
