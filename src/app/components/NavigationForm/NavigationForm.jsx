@@ -1,63 +1,80 @@
-import React, {useState} from 'react';
-import { connect } from 'react-redux';
-import Form from 'react-bootstrap/Form'
-import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
-
-import {setCameraFlyTo} from '../../redux/actions';
+import { setCameraFlyTo } from '../../redux/actions';
 import styles from './NavigationForm.module.css';
 
-const RECTANGULAR_FORM_TYPE = 'Rectangular Coordinate Form';
-const CARTESIAN_FORM_TYPE = 'Cartesian Coordinate Form';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import Form from 'react-bootstrap/Form';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import { Row, Col } from 'react-bootstrap';
+;
+
+
+const RECTANGULAR_FORM_TYPE = 'Rectangular';
+const CARTESIAN_FORM_TYPE = 'Cartesian';
 const radio = 'radio';
 
-const CartesianForm = ({values, onChange}) => {
-    const {x, y, z} = values;
+const CartesianForm = ({ values, onChange }) => {
+    const { longitude, latitude } = values;
     return (
         <>
-            <Form.Group>
-                <Form.Label>X-Coordinate</Form.Label>
-                <Form.Control name="x" type="number" placeholder="Enter x-coordinate.." value={x} onChange={onChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Y-Coordinate</Form.Label>
-                <Form.Control name="y" type="number" placeholder="Enter x-coordinate.." value={y} onChange={onChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Z-Coordinate</Form.Label>
-                <Form.Control name="z" type="number" placeholder="Enter x-coordinate.." value={z} onChange={onChange} />
-            </Form.Group>
+            <Row>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>Longitude (degrees)</Form.Label>
+                        <Form.Control name="longitude" type="number" placeholder="Enter longitude coordinate.." value={longitude} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>Latitude (degrees)</Form.Label>
+                        <Form.Control name="latitude" type="number" placeholder="Enter latitude coordinate.." value={latitude} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+            </Row>
         </>
     );
 };
 
-const RectangularForm = ({values, onChange}) => {
-    const {west, south, east, north} = values;
+const RectangularForm = ({ values, onChange }) => {
+    const { west, south, east, north } = values;
     return (
         <>
-            <Form.Group>
-                <Form.Label>West</Form.Label>
-                <Form.Control name="west" type="number" placeholder="Enter west coordinate.." value={west} onChange={onChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Y-Coordinate</Form.Label>
-                <Form.Control name="south" type="number" placeholder="Enter south coordinate.." value={south} onChange={onChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Z-Coordinate</Form.Label>
-                <Form.Control name="east" type="number" placeholder="Enter east coordinate.." value={east} onChange={onChange} />
-            </Form.Group>
-            <Form.Group>
-                <Form.Label>Z-Coordinate</Form.Label>
-                <Form.Control name="north" type="number" placeholder="Enter north coordinate.." value={north} onChange={onChange} />
-            </Form.Group>
+            <Row>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>West (radians)</Form.Label>
+                        <Form.Control name="west" type="number" placeholder="Enter west coordinate.." value={west} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>South (radians)</Form.Label>
+                        <Form.Control name="south" type="number" placeholder="Enter south coordinate.." value={south} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>East (radians)</Form.Label>
+                        <Form.Control name="east" type="number" placeholder="Enter east coordinate.." value={east} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+                <Col md={6}>
+                    <Form.Group>
+                        <Form.Label>North (radians)</Form.Label>
+                        <Form.Control name="north" type="number" placeholder="Enter north coordinate.." value={north} onChange={onChange} />
+                    </Form.Group>
+                </Col>
+            </Row>
         </>
     );
 }
 
-const NavigationForm = form => {
-    const [cartesianCoords, setCartesianCoords] = useState({x: '', y: '', z: ''});
-    const [rectangularCoords, setRectangularCoords] = useState({west: '', south: '', east: '', north: ''});
+const NavigationForm = ({ setCameraFlyTo }) => {
+    const [cartesianCoords, setCartesianCoords] = useState({ longitude: '', latitude: '' });
+    const [rectangularCoords, setRectangularCoords] = useState({ west: '', south: '', east: '', north: '' });
     const [coordinateFormType, setCoordinateFormType] = useState(CARTESIAN_FORM_TYPE);
 
     const onFormTypeChange = (event) => {
@@ -70,6 +87,7 @@ const NavigationForm = form => {
             [event.target.name]: event.target.value,
         });
     }
+
     const onRectangularCoordinateChange = (event) => {
         setRectangularCoords({
             ...rectangularCoords,
@@ -77,11 +95,33 @@ const NavigationForm = form => {
         });
     }
 
+    const flyTo = () => {
+        switch (coordinateFormType) {
+            case CARTESIAN_FORM_TYPE: {
+                const copy = Object.assign({}, { ...cartesianCoords });
+                Object.keys(copy).forEach(key => {
+                    copy[key] = parseInt(copy[key], 10);
+                });
+                setCameraFlyTo({ destination: copy });
+                return;
+            };
+            case RECTANGULAR_FORM_TYPE: {
+                const copy = Object.assign({}, { ...rectangularCoords });
+                Object.keys(copy).forEach(key => {
+                    copy[key] = parseInt(copy[key], 10);
+                });
+                setCameraFlyTo({ destination: rectangularCoords });
+                return;
+            };
+            default: return;
+        };
+    };
+
     const renderCoordinateForm = (type) => {
         switch (type) {
             case RECTANGULAR_FORM_TYPE: {
                 return (
-                    <RectangularForm 
+                    <RectangularForm
                         values={rectangularCoords}
                         onChange={onRectangularCoordinateChange}
                     />
@@ -89,7 +129,7 @@ const NavigationForm = form => {
             }
             case CARTESIAN_FORM_TYPE: {
                 return (
-                    <CartesianForm 
+                    <CartesianForm
                         values={cartesianCoords}
                         onChange={onCartesianCoordinateChange}
                     />
@@ -102,39 +142,50 @@ const NavigationForm = form => {
     }
 
     return (
-        <Form>
+        <Form inline>
             <Card className={styles.formContainer}>
                 <h4>Navigation Menu</h4>
                 <Card className={styles.cardContainer}>
                     <Form.Group>
-                        <Form.Label>Form Type</Form.Label>
-                        <Form.Check 
-                            type={radio}
-                            name={CARTESIAN_FORM_TYPE}
-                            label={CARTESIAN_FORM_TYPE}
-                            onChange={onFormTypeChange}
-                            checked={coordinateFormType === CARTESIAN_FORM_TYPE}
-                        />
-                        <Form.Check 
-                            type={radio}
-                            name={RECTANGULAR_FORM_TYPE}
-                            label={RECTANGULAR_FORM_TYPE}
-                            onChange={onFormTypeChange}
-                            checked={coordinateFormType === RECTANGULAR_FORM_TYPE}
-                        />
+                        <Row>
+                            <Col md={6}>
+                                <Form.Label><h6>Coordinate Type:{' '}</h6></Form.Label>
+                            </Col>
+                            <Col md={3}>
+                                <Form.Check
+                                    className={styles.formTypeButton}
+                                    type={radio}
+                                    name={CARTESIAN_FORM_TYPE}
+                                    label={CARTESIAN_FORM_TYPE}
+                                    onChange={onFormTypeChange}
+                                    checked={coordinateFormType === CARTESIAN_FORM_TYPE}
+                                />
+                            </Col>
+                            <Col md={3}>
+                                <Form.Check
+                                    className={styles.formTypeButton}
+                                    type={radio}
+                                    name={RECTANGULAR_FORM_TYPE}
+                                    label={RECTANGULAR_FORM_TYPE}
+                                    onChange={onFormTypeChange}
+                                    checked={coordinateFormType === RECTANGULAR_FORM_TYPE}
+                                />
+                            </Col>
+                        </Row>
                     </Form.Group>
                 </Card>
                 <Card className={styles.cardContainer}>
                     {renderCoordinateForm(coordinateFormType)}
                 </Card>
-                <Button type="button">Navigate</Button>
+                <Button type="button" onClick={flyTo}>Navigate</Button>
             </Card>
         </Form>
     );
 };
+
 function mapDispatchToProps(dispatch) {
     return {
-        setCameraFlyTo: setCameraFlyTo,
+        setCameraFlyTo: (args) => dispatch(setCameraFlyTo(args)),
     }
 }
 

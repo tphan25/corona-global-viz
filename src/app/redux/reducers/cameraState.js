@@ -1,5 +1,4 @@
-import {SET_CAMERA_FLY_TO} from '../actionTypes';
-import {Cartesian3} from 'cesium';
+import { SET_CAMERA_FLY_TO } from '../actionTypes';
 
 const initialState = {
     cameraFlyToProps: null,

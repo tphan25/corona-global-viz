@@ -1,8 +1,13 @@
 .formContainer {
     margin: 3px;
     padding: 5px;
+    width: 100%;
 }
 .cardContainer {
     padding: 15px;
-    margin: 5px;
+    margin-top: 5px;
+}
+.flexRowContainer {
+    display: flex;
+    flex-direction: row;
 }
